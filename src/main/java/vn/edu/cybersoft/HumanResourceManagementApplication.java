@@ -2,15 +2,25 @@ package vn.edu.cybersoft;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.InputMismatchException;
 import java.util.List;
 import java.util.Scanner;
 
 public class HumanResourceManagementApplication {
+
     public static void main(String[] args) {
-        HumanResourceManagementApplication app = new HumanResourceManagementApplication();
-        List<Employee> employees = new ArrayList<>();
-        Company company = new Company();
-        while (true) app.menu(employees, company);
+        try {
+            HumanResourceManagementApplication app = new HumanResourceManagementApplication();
+            List<Employee> employees = new ArrayList<>();
+            Company company = new Company();
+            while (true) app.menu(employees, company);
+        } catch (Exception e) {
+            if (e instanceof InputMismatchException) {
+                System.out.println("Lua chon khong hop le");
+            }
+            e.printStackTrace();
+        }
+
     }
 
     public void menu(List<Employee> lists, Company company) {
@@ -41,7 +51,7 @@ public class HumanResourceManagementApplication {
             case 2:
                 // todo fix after
                 System.out.println("Phan bo Nhan vien vao Truong phong");
-                addRegularStaffToDepartmentHead();
+                addRegularStaffToDepartmentHead(lists);
                 break;
             case 3:
                 System.out.println("Them, xoa thong tin mot nhan su");
@@ -107,12 +117,33 @@ public class HumanResourceManagementApplication {
     }
 
     // Phan bo Nhan vien vao Truong phong
-    public void addRegularStaffToDepartmentHead() {
-        RegularStaff regularStaff = new RegularStaff();
-        regularStaff.addInformation();
-        DepartmentHead departmentHead = new DepartmentHead();
-        departmentHead.addInformation();
-        regularStaff.setDepartmentHead(departmentHead);
+    public void addRegularStaffToDepartmentHead(List<Employee> lists) {
+        System.out.println("Nhap ma so nhan vien cua Truong phong");
+        Scanner sc = new Scanner(System.in);
+        String id = sc.nextLine();
+        for (Employee employee : lists) {
+            if (employee.getId().equals(id)) {
+                if (employee instanceof DepartmentHead) {
+                    DepartmentHead departmentHead = (DepartmentHead) employee;
+                    System.out.println("Nhap ma so nhan vien cua Nhan vien thuong");
+                    String id2 = sc.nextLine();
+                    for (Employee employee1 : lists) {
+                        if (employee1.getId().equals(id2)) {
+                            if (employee1 instanceof RegularStaff) {
+                                RegularStaff regularStaff = (RegularStaff) employee1;
+                                departmentHead.addStaff(regularStaff);
+                                regularStaff.setDepartmentHead(departmentHead);
+                                System.out.println("Da them nhan vien thuong vao Truong phong");
+                                return;
+                            }
+                        }
+                    }
+                    System.out.println("Khong tim thay nhan vien thuong co ma so: " + id2);
+                    return;
+                }
+            }
+        }
+        System.out.println("Khong tim thay truong phong co ma so: " + id);
     }
 
     // Them thong tin mot nhan su
@@ -358,6 +389,10 @@ public class HumanResourceManagementApplication {
     public void calculateTotalIncomeOfDirector(List<Employee> lists, Company company) {
         if (company.getRevenuePerMonth() == null) {
             System.out.println("Chua nhap thong tin cong ty");
+            return;
+        }
+        if (lists.isEmpty()) {
+            System.out.println("Chua co nhan vien nao trong cong ty");
             return;
         }
 

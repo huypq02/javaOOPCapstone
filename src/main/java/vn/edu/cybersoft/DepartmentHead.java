@@ -13,12 +13,12 @@ public class DepartmentHead extends Employee implements Policy {
 
     public DepartmentHead(String id, String name, String phoneNumber, int workingDays, BigDecimal salaryOneDay) {
         super(id, name, phoneNumber, workingDays, salaryOneDay);
-        this.numberOfStaffManaged = staffManaged.size();
+        this.numberOfStaffManaged = 0;
         this.staffManaged = new ArrayList<>();
     }
 
     public DepartmentHead(){
-        this.numberOfStaffManaged = staffManaged.size();
+        this.numberOfStaffManaged = 0;
         this.staffManaged = new ArrayList<>();
     }
 
@@ -53,18 +53,20 @@ public class DepartmentHead extends Employee implements Policy {
     }
 
     public void addStaff(RegularStaff regularStaff) {
-        staffManaged.add(regularStaff);
+        this.staffManaged.add(regularStaff);
+        this.numberOfStaffManaged++;
         regularStaff.setDepartmentHead(this);
     }
 
     public void removeStaff(RegularStaff regularStaff) {
-        staffManaged.remove(regularStaff);
+        this.staffManaged.remove(regularStaff);
+        this.numberOfStaffManaged--;
     }
 
     public void removeAllStaffs() {
-        for (RegularStaff staff : staffManaged) {
-            staff.setDepartmentHeadId(null);
+        for (RegularStaff staff : this.staffManaged) {
+            staff.setDepartmentHead(null);
         }
-        staffManaged.clear();
+        this.staffManaged.clear();
     }
 }
