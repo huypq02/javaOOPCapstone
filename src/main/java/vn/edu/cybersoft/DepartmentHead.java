@@ -30,7 +30,12 @@ public class DepartmentHead extends Employee implements Policy {
     @Override
     public void displayInformation(){
         super.displayInformation();
+        System.out.println("Luong: " + this.calculateSalary());
         System.out.println("So nhan vien quan ly: " + numberOfStaffManaged);
+        System.out.println("Danh sach nhan vien quan ly: ");
+        for (RegularStaff staff : staffManaged) {
+            System.out.println("Ma so nhan vien: " + staff.getId());
+        }
     }
 
     public int getNumberOfStaff() {
