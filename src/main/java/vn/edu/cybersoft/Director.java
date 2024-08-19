@@ -26,6 +26,7 @@ public class Director extends Employee implements Policy {
     @Override
     public void displayInformation(){
         super.displayInformation();
+        System.out.println("Luong: " + this.calculateSalary());
         System.out.println("Ty le co phan trong cong ty (%): " + shareRate);
     }
 

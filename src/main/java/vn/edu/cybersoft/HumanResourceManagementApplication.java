@@ -1,10 +1,7 @@
 package vn.edu.cybersoft;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.InputMismatchException;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class HumanResourceManagementApplication {
 
@@ -49,7 +46,6 @@ public class HumanResourceManagementApplication {
                 companyInfo(company);
                 break;
             case 2:
-                // todo fix after
                 System.out.println("Phan bo Nhan vien vao Truong phong");
                 addRegularStaffToDepartmentHead(lists);
                 break;
@@ -98,7 +94,7 @@ public class HumanResourceManagementApplication {
                 break;
             case 10:
                 System.out.println("Tim Giam doc co so luong co phieu nhieu nhat");
-
+                findDirectorHasMostStock(lists);
                 break;
             case 11:
                 System.out.println("Tim va Xuat tong THU NHAP cua tung giam doc");
@@ -129,7 +125,7 @@ public class HumanResourceManagementApplication {
                     String id2 = sc.nextLine();
                     for (Employee employee1 : lists) {
                         if (employee1.getId().equals(id2)) {
-                            if (employee1 instanceof RegularStaff) {
+                            if (employee1 instanceof RegularStaff && ((RegularStaff) employee1).getDepartmentHead() == null) {
                                 RegularStaff regularStaff = (RegularStaff) employee1;
                                 departmentHead.addStaff(regularStaff);
                                 regularStaff.setDepartmentHead(departmentHead);
@@ -138,7 +134,8 @@ public class HumanResourceManagementApplication {
                             }
                         }
                     }
-                    System.out.println("Khong tim thay nhan vien thuong co ma so: " + id2);
+                    System.out.println("Nhan vien thuong da co Truong phong quan ly hoac " +
+                            "khong ton tai nhan vien thuong, voi ma so: " + id2);
                     return;
                 }
             }
@@ -158,16 +155,34 @@ public class HumanResourceManagementApplication {
             case 1:
                 Director director = new Director();
                 director.addInformation();
+                for (Employee employee : lists) {
+                    if (employee.getId().equals(director.getId())) {
+                        System.out.println("Ma so nhan vien da ton tai");
+                        return;
+                    }
+                }
                 lists.add(director);
                 break;
             case 2:
                 DepartmentHead departmentHead = new DepartmentHead();
                 departmentHead.addInformation();
+                for (Employee employee : lists) {
+                    if (employee.getId().equals(departmentHead.getId())) {
+                        System.out.println("Ma so nhan vien da ton tai");
+                        return;
+                    }
+                }
                 lists.add(departmentHead);
                 break;
             case 3:
                 RegularStaff regularStaff = new RegularStaff();
                 regularStaff.addInformation();
+                for (Employee employee : lists) {
+                    if (employee.getId().equals(regularStaff.getId())) {
+                        System.out.println("Ma so nhan vien da ton tai");
+                        return;
+                    }
+                }
                 lists.add(regularStaff);
                 break;
             default:
@@ -183,6 +198,14 @@ public class HumanResourceManagementApplication {
         for (Employee employee : lists) {
             if (employee.getId().equals(id)) {
                 lists.remove(employee);
+                if (employee instanceof DepartmentHead) {
+                    DepartmentHead departmentHead = (DepartmentHead) employee;
+                    departmentHead.removeAllStaffs();
+                }
+                if (employee instanceof RegularStaff) {
+                    RegularStaff regularStaff = (RegularStaff) employee;
+                    regularStaff.getDepartmentHead().removeStaff(regularStaff);
+                }
                 System.out.println("Da xoa nhan vien co ma so: " + id);
                 return;
             }
@@ -213,15 +236,15 @@ public class HumanResourceManagementApplication {
             if (employee instanceof Director) {
                 Director director = (Director) employee;
                 totalSalary = totalSalary.add(director.calculateSalary());
-                System.out.println("Luong cua " + director.getName() + " la: " + director.calculateSalary());
+//                System.out.println("Luong cua " + director.getName() + " la: " + director.calculateSalary());
             } else if (employee instanceof DepartmentHead) {
                 DepartmentHead departmentHead = (DepartmentHead) employee;
                 totalSalary = totalSalary.add(departmentHead.calculateSalary());
-                System.out.println("Luong cua " + departmentHead.getName() + " la: " + departmentHead.calculateSalary());
+//                System.out.println("Luong cua " + departmentHead.getName() + " la: " + departmentHead.calculateSalary());
             } else {
                 RegularStaff regularStaff = (RegularStaff) employee;
                 totalSalary = totalSalary.add(regularStaff.calculateSalary());
-                System.out.println("Luong cua " + regularStaff.getName() + " la: " + regularStaff.calculateSalary());
+//                System.out.println("Luong cua " + regularStaff.getName() + " la: " + regularStaff.calculateSalary());
             }
         }
         return totalSalary;
@@ -230,13 +253,12 @@ public class HumanResourceManagementApplication {
     // Nhan vien thuong co luong cao nhat
     public void findEmployeeHasHighestSalary(List<Employee> lists) {
         BigDecimal maxSalary = BigDecimal.valueOf(0);
-        RegularStaff regularStaffWithMaxSalary = new RegularStaff();
+        List <RegularStaff> regularStaffWithMaxSalaryList = new ArrayList<>();
         for (Employee employee : lists) {
             if (employee instanceof RegularStaff) {
                 RegularStaff regularStaff = (RegularStaff) employee;
                 if (regularStaff.calculateSalary().compareTo(maxSalary) > 0){
                     maxSalary = regularStaff.calculateSalary();
-                    regularStaffWithMaxSalary = regularStaff;
                 }
             }
         }
@@ -244,19 +266,30 @@ public class HumanResourceManagementApplication {
             System.out.println("Khong co nhan vien thuong nao trong cong ty co luong");
             return;
         }
-        System.out.println("Nhan vien thuong co luong cao nhat la: " + regularStaffWithMaxSalary.getName());
+
+        for (Employee employee : lists) {
+            if (employee instanceof RegularStaff) {
+                RegularStaff regularStaff = (RegularStaff) employee;
+                if (Objects.equals(regularStaff.calculateSalary(), maxSalary)) {
+                    regularStaffWithMaxSalaryList.add(regularStaff);
+                }
+            }
+        }
+
+        for (RegularStaff regularStaff : regularStaffWithMaxSalaryList) {
+            System.out.println("Nhan vien thuong co luong cao nhat la: " + regularStaff.getName());
+        }
     }
 
     // Truong phong co so luong nhan vien duoi quyen nhieu nhat
     public void findDepartmentHeadHasMostStaff(List<Employee> lists) {
         int maxStaff = 0;
-        DepartmentHead departmentHeadWithMostStaff = new DepartmentHead();
+        List <DepartmentHead> departmentHeadWithMostStaffList = new ArrayList<>();
         for (Employee employee : lists) {
             if (employee instanceof DepartmentHead) {
                 DepartmentHead departmentHead = (DepartmentHead) employee;
                 if (departmentHead.getNumberOfStaff() > maxStaff) {
                     maxStaff = departmentHead.getNumberOfStaff();
-                    departmentHeadWithMostStaff = departmentHead;
                 }
             }
         }
@@ -264,7 +297,19 @@ public class HumanResourceManagementApplication {
             System.out.println("Khong co truong phong nao trong cong ty co nhan vien duoi quyen");
             return;
         }
-        System.out.println("Truong phong co so nhan vien duoi quyen nhieu nhat la: " + departmentHeadWithMostStaff.getName());
+
+        for (Employee employee : lists) {
+            if (employee instanceof DepartmentHead) {
+                DepartmentHead departmentHead = (DepartmentHead) employee;
+                if (departmentHead.getNumberOfStaff() == maxStaff) {
+                    departmentHeadWithMostStaffList.add(departmentHead);
+                }
+            }
+        }
+
+        for (DepartmentHead departmentHead : departmentHeadWithMostStaffList) {
+            System.out.println("Truong phong co so nhan vien duoi quyen nhieu nhat la: " + departmentHead.getName());
+        }
     }
 
     //  Sap xep nhan vien theo thu tu tang dan cua ten (abc)
@@ -366,13 +411,12 @@ public class HumanResourceManagementApplication {
     // Tim Giam doc co so luong co phieu nhieu nhat
     public void findDirectorHasMostStock(List<Employee> lists) {
         double maxStock = 0;
-        Director directorWithMostStock = new Director();
+        List <Director> directorWithMostStockList = new ArrayList<>();
         for (Employee employee : lists) {
             if (employee instanceof Director) {
                 Director director = (Director) employee;
                 if (director.getShareRate() > maxStock) {
                     maxStock = director.getShareRate();
-                    directorWithMostStock = director;
                 }
             }
         }
@@ -380,11 +424,23 @@ public class HumanResourceManagementApplication {
             System.out.println("Khong co giam doc nao trong cong ty co so luong co phieu");
             return;
         }
-        System.out.println("Giam doc co so luong co phieu nhieu nhat la: " + directorWithMostStock.getName());
+
+        for (Employee employee : lists) {
+            if (employee instanceof Director) {
+                Director director = (Director) employee;
+                if (director.getShareRate() == maxStock) {
+                    directorWithMostStockList.add(director);
+                }
+            }
+        }
+
+        for (Director directorWithMostStock : directorWithMostStockList) {
+            System.out.println("Giam doc co so luong co phieu nhieu nhat la: " + directorWithMostStock.getName());
+        }
     }
 
     // Tinh va Xuat tong THU NHAP cua tung giam doc
-    // Thu nhap = Luong + so co phan * Doanh thu thang
+    // Thu nhap = Luong + so co phan * Loi nhuan cong ty
     // Loi nhuan cong ty = Doanh thu thang - Tong luong cua toan bo nhan vien
     public void calculateTotalIncomeOfDirector(List<Employee> lists, Company company) {
         if (company.getRevenuePerMonth() == null) {
@@ -402,7 +458,7 @@ public class HumanResourceManagementApplication {
             if (employee instanceof Director) {
                 Director director = (Director) employee;
                 BigDecimal salary = director.calculateSalary();
-                BigDecimal stock = BigDecimal.valueOf(director.getShareRate());
+                BigDecimal stock = BigDecimal.valueOf(director.getShareRate()/100);
                 BigDecimal income = salary.add(stock.multiply(profit));
                 System.out.println("Thu nhap cua " + director.getName() + " la: " + income);
             }

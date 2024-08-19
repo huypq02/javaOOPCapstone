@@ -23,6 +23,7 @@ public class RegularStaff extends Employee implements Policy {
     @Override
     public void displayInformation(){
         super.displayInformation();
+        System.out.println("Luong: " + this.calculateSalary());
         if (this.departmentHead == null) {
             System.out.println("Ma so truong phong quan ly: null");
             return;
