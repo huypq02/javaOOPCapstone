@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
-import vn.edu.cybersoft.humanResourceValidator;
+import vn.edu.cybersoft.validator.humanResourceValidator;
 import vn.edu.cybersoft.validator.humanResourceValidator;
 
 public abstract class Employee {
