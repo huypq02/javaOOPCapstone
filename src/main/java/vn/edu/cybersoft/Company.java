@@ -42,4 +42,29 @@ public class Company {
 //        BigDecimal bonus = employee.calculateBonus();
 //        System.out.println("Bonus of " + employee.getName() + " is " + bonus);
 //    }
+
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getTaxCode() {
+        return taxCode;
+    }
+
+    public void setTaxCode(String taxCode) {
+        this.taxCode = taxCode;
+    }
+
+    public BigDecimal getRevenuePerMonth() {
+        return revenuePerMonth;
+    }
+
+    public void setRevenuePerMonth(BigDecimal revenuePerMonth) {
+        this.revenuePerMonth = revenuePerMonth;
+    }
 }

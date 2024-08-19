@@ -9,10 +9,11 @@ public class HumanResourceManagementApplication {
     public static void main(String[] args) {
         HumanResourceManagementApplication app = new HumanResourceManagementApplication();
         List<Employee> employees = new ArrayList<>();
-        while (true) app.menu(employees);
+        Company company = new Company();
+        while (true) app.menu(employees, company);
     }
 
-    public void menu(List<Employee> lists) {
+    public void menu(List<Employee> lists, Company company) {
         System.out.println("0. Thoat");
         System.out.println("1. Nhap thong tin cong ty");
         System.out.println("2. Phan bo Nhan vien vao Truong phong");
@@ -35,7 +36,7 @@ public class HumanResourceManagementApplication {
                 System.exit(0);
             case 1:
                 System.out.println("Nhap thong tin cong ty");
-                companyInfo();
+                companyInfo(company);
                 break;
             case 2:
                 // todo fix after
@@ -67,7 +68,7 @@ public class HumanResourceManagementApplication {
                 break;
             case 5:
                 System.out.println("Tinh va xuat tong luong cho toan bo cong ty");
-                calculateTotalSalary(lists);
+                System.out.println("Tong luong toan bo cong ty la: " + calculateTotalSalaryAMonth(lists));
                 break;
             case 6:
                 System.out.println("Tim Nhan vien thuong co luong cao nhat");
@@ -91,6 +92,7 @@ public class HumanResourceManagementApplication {
                 break;
             case 11:
                 System.out.println("Tim va Xuat tong THU NHAP cua tung giam doc");
+                calculateTotalIncomeOfDirector(lists, company);
                 break;
             default:
                 System.out.println("Lua chon khong hop le");
@@ -99,8 +101,7 @@ public class HumanResourceManagementApplication {
     }
 
     // Nhap thong tin cong ty
-    public void companyInfo() {
-        Company company = new Company();
+    public void companyInfo(Company company) {
         company.addInformation();
 //        company.displayInformation();
     }
@@ -175,19 +176,24 @@ public class HumanResourceManagementApplication {
     }
 
     // Tinh va xuat tong luong cho toan bo cong ty
-    public void calculateTotalSalary(List<Employee> lists) {
+    public BigDecimal calculateTotalSalaryAMonth(List<Employee> lists) {
+        BigDecimal totalSalary = BigDecimal.valueOf(0);
         for (Employee employee : lists) {
             if (employee instanceof Director) {
                 Director director = (Director) employee;
+                totalSalary = totalSalary.add(director.calculateSalary());
                 System.out.println("Luong cua " + director.getName() + " la: " + director.calculateSalary());
             } else if (employee instanceof DepartmentHead) {
                 DepartmentHead departmentHead = (DepartmentHead) employee;
+                totalSalary = totalSalary.add(departmentHead.calculateSalary());
                 System.out.println("Luong cua " + departmentHead.getName() + " la: " + departmentHead.calculateSalary());
             } else {
                 RegularStaff regularStaff = (RegularStaff) employee;
+                totalSalary = totalSalary.add(regularStaff.calculateSalary());
                 System.out.println("Luong cua " + regularStaff.getName() + " la: " + regularStaff.calculateSalary());
             }
         }
+        return totalSalary;
     }
 
     // Nhan vien thuong co luong cao nhat
@@ -344,5 +350,27 @@ public class HumanResourceManagementApplication {
             return;
         }
         System.out.println("Giam doc co so luong co phieu nhieu nhat la: " + directorWithMostStock.getName());
+    }
+
+    // Tinh va Xuat tong THU NHAP cua tung giam doc
+    // Thu nhap = Luong + so co phan * Doanh thu thang
+    // Loi nhuan cong ty = Doanh thu thang - Tong luong cua toan bo nhan vien
+    public void calculateTotalIncomeOfDirector(List<Employee> lists, Company company) {
+        if (company.getRevenuePerMonth() == null) {
+            System.out.println("Chua nhap thong tin cong ty");
+            return;
+        }
+
+        BigDecimal totalSalary = calculateTotalSalaryAMonth(lists);
+        BigDecimal profit = company.getRevenuePerMonth().subtract(totalSalary);
+        for (Employee employee : lists) {
+            if (employee instanceof Director) {
+                Director director = (Director) employee;
+                BigDecimal salary = director.calculateSalary();
+                BigDecimal stock = BigDecimal.valueOf(director.getShareRate());
+                BigDecimal income = salary.add(stock.multiply(profit));
+                System.out.println("Thu nhap cua " + director.getName() + " la: " + income);
+            }
+        }
     }
 }
