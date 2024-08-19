@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
+import vn.edu.cybersoft.validator.humanResourceValidator;
+import vn.edu.cybersoft.validator.humanResourceValidator;
 
 public abstract class Employee {
     private String id;
@@ -26,12 +28,28 @@ public abstract class Employee {
         Scanner sc = new Scanner(System.in);
         System.out.print("Nhap ma so nhan vien: ");
         this.id = sc.nextLine();
+        if (!humanResourceValidator.isId(this.id)) {
+            System.out.println("Ma so nhan vien khong hop le");
+            return;
+        }
         System.out.print("Nhap ten nhan vien: ");
         this.name = sc.nextLine();
+        if (!humanResourceValidator.isName(this.name)) {
+            System.out.println("Ten nhan vien khong hop le");
+            return;
+        }
         System.out.print("Nhap so dien thoai: ");
         this.phoneNumber = sc.nextLine();
+        if (!humanResourceValidator.isPhoneNumber(this.phoneNumber)) {
+            System.out.println("So dien thoai khong hop le");
+            return;
+        }
         System.out.print("Nhap so ngay lam viec: ");
         this.workingDays = sc.nextInt();
+        if (!humanResourceValidator.isWorkingDays(this.workingDays)) {
+            System.out.println("So ngay lam viec khong hop le");
+            return;
+        }
     }
 
     public void displayInformation(){

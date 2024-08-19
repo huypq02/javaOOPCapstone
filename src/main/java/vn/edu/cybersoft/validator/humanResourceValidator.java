@@ -2,15 +2,12 @@ package vn.edu.cybersoft.validator;
 
 import vn.edu.cybersoft.Company;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public class humanResourceValidator {
     public static boolean isPhoneNumber(String phoneNumber) {
         return phoneNumber.matches("0\\d{9}");
-    }
-
-    public static boolean isTaxCode(String taxCode) {
-        return taxCode.matches("\\d{10}");
     }
 
     public static boolean isWorkingDays(int workingDays) {
@@ -21,14 +18,6 @@ public class humanResourceValidator {
         return shareRate >= 0 && shareRate <= 100;
     }
 
-    public static boolean isSalaryOneDay(String salaryOneDay) {
-        return salaryOneDay.matches("\\d+");
-    }
-
-    public static boolean isDepartmentHeadId(String departmentHeadId) {
-        return departmentHeadId.matches("TP\\d{3}");
-    }
-
     public static boolean isId(String id) {
         return id.matches("\\d{3}");
     }
@@ -37,7 +26,11 @@ public class humanResourceValidator {
         return name.matches("[a-zA-Z ]+");
     }
 
-    public static boolean isWorkingDays(String workingDays) {
-        return workingDays.matches("\\d+");
+    public static boolean isTaxCode(String taxCode) {
+        return taxCode.matches("\\d{10}");
+    }
+
+    public static boolean revenuePerMonth(BigDecimal revenue) {
+        return revenue.compareTo(new BigDecimal(0)) > 0;
     }
 }

@@ -1,5 +1,7 @@
 package vn.edu.cybersoft;
 
+import vn.edu.cybersoft.validator.humanResourceValidator;
+
 import java.math.BigDecimal;
 import java.util.Scanner;
 
@@ -23,8 +25,16 @@ public class Company {
         name = sc.nextLine();
         System.out.print("Nhap ma so thue: ");
         taxCode = sc.nextLine();
+        if(!humanResourceValidator.isTaxCode(taxCode)) {
+            System.out.println("Ma so thue khong hop le");
+            return;
+        }
         System.out.print("Nhap doanh thu thang: ");
         revenuePerMonth = sc.nextBigDecimal();
+        if (!humanResourceValidator.revenuePerMonth(revenuePerMonth)) {
+            System.out.println("Doanh thu thang khong hop le");
+            return;
+        }
     }
 
     public void displayInformation() {
