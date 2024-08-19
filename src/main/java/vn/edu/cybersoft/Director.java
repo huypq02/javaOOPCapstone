@@ -1,5 +1,7 @@
 package vn.edu.cybersoft;
 
+import vn.edu.cybersoft.validator.humanResourceValidator;
+
 import java.math.BigDecimal;
 import java.util.Scanner;
 
@@ -21,6 +23,10 @@ public class Director extends Employee implements Policy {
         Scanner sc = new Scanner(System.in);
         System.out.print("Nhap ty le co phan trong cong ty (%): ");
         this.shareRate = sc.nextDouble();
+        if (!humanResourceValidator.isShareRate(this.shareRate)) {
+            System.out.println("So co phan (%) khong hop le");
+            return;
+        }
     }
 
     @Override
